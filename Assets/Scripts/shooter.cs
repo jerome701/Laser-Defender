@@ -7,7 +7,10 @@ public class shooter : MonoBehaviour
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] float projectileSpeed = 10f;
     [SerializeField] float projectileLifetime = 5f;
-    [SerializeField] float firingRate = 0.2f;
+    [SerializeField] float baseFiringRate = 0.2f;
+    [SerializeField] bool useAI;
+    [SerializeField] float firingRateVarience = 0f;
+    [SerializeField] float minimumFiringRate = 0.1f;
 
     public bool isFiring;
 
@@ -15,7 +18,10 @@ public class shooter : MonoBehaviour
     
     void Start()
     {
-        
+        if(useAI)
+        {
+            isFiring = true;
+        }
     }
 
     void Update()
@@ -49,7 +55,12 @@ public class shooter : MonoBehaviour
             }
 
             Destroy(instance, projectileLifetime);
-            yield return new WaitForSeconds(firingRate);
+
+            float timeToNextProjectile = Random.Range(baseFiringRate - firingRateVarience,
+                                            baseFiringRate + firingRateVarience);
+            timeToNextProjectile = Mathf.Clamp(timeToNextProjectile, minimumFiringRate, float.MaxValue);
+
+            yield return new WaitForSeconds(timeToNextProjectile);
         }
     }
 
